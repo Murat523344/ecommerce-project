@@ -46,4 +46,4 @@ pytest -v
 pytest --cov=src --cov-report=term-missing
 
 # Запуск main.py
-python main.py
+python main.py## Версия: 1.0.0
