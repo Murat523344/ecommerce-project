@@ -1,6 +1,7 @@
 """Тесты для утилит загрузки данных."""
 
 import json
+import pytest
 from unittest.mock import mock_open, patch
 from src.utils import load_categories_from_json
 
@@ -33,7 +34,11 @@ class TestLoadCategoriesFromJson:
             assert len(categories) == 1
             category = categories[0]
             assert category.name == "Тестовая категория"
-            assert len(category.products) == 1
+            assert category.description == "Описание тестовой категории"
+            # Проверяем, что products возвращает строку с продуктом
+            assert "Тестовый продукт" in category.products
+            assert "1000.5" in category.products
+            assert "Остаток: 10" in category.products
 
     def test_load_multiple_categories(self):
         """Тест загрузки нескольких категорий."""
@@ -72,6 +77,8 @@ class TestLoadCategoriesFromJson:
             assert len(categories) == 2
             assert categories[0].name == "Категория 1"
             assert categories[1].name == "Категория 2"
+            assert "Продукт 1" in categories[0].products
+            assert "Продукт 2" in categories[1].products
 
     def test_load_empty_products(self):
         """Тест загрузки категории без продуктов."""
@@ -89,7 +96,7 @@ class TestLoadCategoriesFromJson:
             categories = load_categories_from_json("dummy_path.json")
 
             assert len(categories) == 1
-            assert len(categories[0].products) == 0
+            assert categories[0].products == ""  # пустая строка для пустой категории
 
     def test_load_missing_fields(self):
         """Тест загрузки данных с отсутствующими полями."""
@@ -108,8 +115,22 @@ class TestLoadCategoriesFromJson:
             categories = load_categories_from_json("dummy_path.json")
 
             category = categories[0]
-            assert category.description == ""
+            assert category.description == ""  # значение по умолчанию
 
-            product = category.products[0]
-            assert product.description == ""
-            assert product.price == 0.0
+            # Проверяем, что продукт создался с значениями по умолчанию
+            assert "Продукт без цены" in category.products
+            assert "0.0" in category.products  # цена по умолчанию
+            assert "Остаток: 5" in category.products
+
+    def test_load_file_not_found(self):
+        """Тест обработки отсутствующего файла."""
+        with pytest.raises(FileNotFoundError):
+            load_categories_from_json("non_existent_file.json")
+
+    def test_load_invalid_json(self):
+        """Тест обработки некорректного JSON."""
+        mock_data = "this is not valid json"
+
+        with patch("builtins.open", mock_open(read_data=mock_data)):
+            with pytest.raises(json.JSONDecodeError):
+                load_categories_from_json("dummy_path.json")
