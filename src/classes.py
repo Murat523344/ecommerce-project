@@ -23,6 +23,29 @@ class Product:
         self._price = price  # приватный атрибут
         self.quantity = quantity
 
+    def __str__(self) -> str:
+        """
+        Строковое представление продукта.
+
+        Returns:
+            Строка в формате: "Название продукта, X руб. Остаток: X шт."
+        """
+        return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: 'Product') -> float:
+        """
+        Магический метод сложения двух продуктов.
+
+        Args:
+            other: Другой объект Product
+
+        Returns:
+            Сумма произведений цены на количество для двух продуктов
+        """
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты Product")
+        return (self._price * self.quantity) + (other._price * other.quantity)
+
     @property
     def price(self) -> float:
         """Геттер для цены."""
@@ -84,6 +107,16 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(products)
 
+    def __str__(self) -> str:
+        """
+        Строковое представление категории.
+
+        Returns:
+            Строка в формате: "Название категории, количество продуктов: X шт."
+        """
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
     @property
     def products(self) -> str:
         """
@@ -98,10 +131,7 @@ class Category:
 
         result = []
         for product in self.__products:
-            result.append(
-                f"{product.name}, {product.price} руб. Остаток: "
-                f"{product.quantity} шт.\n"
-            )
+            result.append(str(product) + "\n")
         return "".join(result)
 
     def add_product(self, product: Product) -> None:

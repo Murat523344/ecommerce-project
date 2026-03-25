@@ -29,6 +29,27 @@ class TestProduct:
 
         assert product.quantity == 0
 
+    def test_product_str_method(self):
+        """Тест строкового представления продукта."""
+        product = Product("Смартфон", "Мощный смартфон", 50000.0, 10)
+        expected = "Смартфон, 50000.0 руб. Остаток: 10 шт."
+        assert str(product) == expected
+
+    def test_product_add_method(self):
+        """Тест сложения двух продуктов."""
+        product1 = Product("Товар1", "Описание1", 100.0, 10)
+        product2 = Product("Товар2", "Описание2", 200.0, 2)
+        expected_sum = (100.0 * 10) + (200.0 * 2)  # 1000 + 400 = 1400
+
+        assert product1 + product2 == expected_sum
+
+    def test_product_add_method_invalid_type(self):
+        """Тест сложения продукта с объектом другого типа."""
+        product = Product("Товар", "Описание", 100.0, 10)
+
+        with pytest.raises(TypeError, match="Можно складывать только объекты Product"):
+            _ = product + "not a product"
+
     def test_price_setter_positive(self):
         """Тест сеттера цены с положительным значением."""
         product = Product("Телефон", "Смартфон", 30000.0, 15)
@@ -43,7 +64,7 @@ class TestProduct:
 
         captured = capsys.readouterr()
         assert "Цена не должна быть нулевая или отрицательная" in captured.out
-        assert product.price == 30000.0  # цена не изменилась
+        assert product.price == 30000.0
 
     def test_price_setter_zero(self, capsys):
         """Тест сеттера цены с нулевым значением."""
@@ -52,7 +73,7 @@ class TestProduct:
 
         captured = capsys.readouterr()
         assert "Цена не должна быть нулевая или отрицательная" in captured.out
-        assert product.price == 30000.0  # цена не изменилась
+        assert product.price == 30000.0
 
     def test_new_product_classmethod(self):
         """Тест класс-метода new_product."""
@@ -92,6 +113,22 @@ class TestCategory:
         assert category.name == "Категория1"
         assert category.description == "Описание категории"
 
+    def test_category_str_method(self):
+        """Тест строкового представления категории."""
+        products = [
+            Product("Товар1", "Описание1", 100.0, 10),
+            Product("Товар2", "Описание2", 200.0, 20)
+        ]
+        category = Category("Электроника", "Различные устройства", products)
+        expected = "Электроника, количество продуктов: 30 шт."
+        assert str(category) == expected
+
+    def test_category_str_method_empty(self):
+        """Тест строкового представления пустой категории."""
+        category = Category("Пустая", "Нет товаров", [])
+        expected = "Пустая, количество продуктов: 0 шт."
+        assert str(category) == expected
+
     def test_category_count_increments(self):
         """Тест подсчета количества категорий."""
         Category("Кат1", "Описание1", [])
@@ -127,11 +164,7 @@ class TestCategory:
 
         category.add_product(product)
 
-        # Проверяем, что продукт добавился через геттер
-        products_str = category.products
-        assert "Смартфон" in products_str
-        assert "50000.0" in products_str
-        assert "Остаток: 10" in products_str
+        assert "Смартфон" in category.products
         assert Category.product_count == 1
 
     def test_add_multiple_products(self):
@@ -143,9 +176,8 @@ class TestCategory:
         category.add_product(product1)
         category.add_product(product2)
 
-        products_str = category.products
-        assert "Смартфон" in products_str
-        assert "Ноутбук" in products_str
+        assert "Смартфон" in category.products
+        assert "Ноутбук" in category.products
         assert Category.product_count == 2
 
     def test_products_getter_format(self):

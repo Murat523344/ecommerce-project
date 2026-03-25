@@ -26,6 +26,21 @@ def main() -> None:
     print("\nТовары в категории:")
     print(electronics.products)
 
+    # Тестирование строкового представления
+    print("\n--- Тестирование __str__ ---")
+    print(f"Продукт: {product1}")
+    print(f"Категория: {electronics}")
+
+    # Тестирование сложения продуктов
+    print("\n--- Тестирование __add__ ---")
+    product3 = Product("Планшет", "Удобный планшет", 35000.0, 8)
+    total_cost = product1 + product3
+    print(f"Стоимость товаров на складе: {total_cost} руб.")
+    print(
+        f"Расчет: {product1.price} * {product1.quantity} + "
+        f"{product3.price} * {product3.quantity} = {total_cost}"
+    )
+
     # Тестирование сеттера цены
     print("\n--- Тестирование сеттера цены ---")
     print(f"Текущая цена смартфона: {product1.price} руб.")
@@ -52,6 +67,7 @@ def main() -> None:
         for category in categories:
             print(f"\nЗагружена категория: {category.name}")
             print(category.products)
+            print(f"Строковое представление: {category}")
     except FileNotFoundError:
         print("\nФайл products.json не найден")
     except json.JSONDecodeError:
