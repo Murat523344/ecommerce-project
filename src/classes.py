@@ -41,9 +41,15 @@ class Product:
 
         Returns:
             Сумма произведений цены на количество для двух продуктов
+
+        Raises:
+            TypeError: Если объекты разных классов
         """
-        if not isinstance(other, Product):
-            raise TypeError("Можно складывать только объекты Product")
+        if type(self) is not type(other):
+            raise TypeError(
+                f"Нельзя складывать объекты разных классов: "
+                f"{type(self).__name__} и {type(other).__name__}"
+            )
         return (self._price * self.quantity) + (other._price * other.quantity)
 
     @property
@@ -81,6 +87,71 @@ class Product:
             price=product_data.get('price', 0.0),
             quantity=product_data.get('quantity', 0)
         )
+
+
+class Smartphone(Product):
+    """Класс для представления смартфона."""
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: str,
+        model: str,
+        memory: int,
+        color: str,
+    ) -> None:
+        """
+        Инициализация смартфона.
+
+        Args:
+            name: Название смартфона
+            description: Описание смартфона
+            price: Цена смартфона
+            quantity: Количество на складе
+            efficiency: Производительность
+            model: Модель смартфона
+            memory: Объем встроенной памяти (ГБ)
+            color: Цвет смартфона
+        """
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    """Класс для представления газонной травы."""
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ) -> None:
+        """
+        Инициализация газонной травы.
+
+        Args:
+            name: Название травы
+            description: Описание травы
+            price: Цена травы
+            quantity: Количество на складе
+            country: Страна-производитель
+            germination_period: Срок прорастания
+            color: Цвет травы
+        """
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
 
 
 class Category:
@@ -139,7 +210,15 @@ class Category:
         Добавление продукта в категорию.
 
         Args:
-            product: Объект класса Product для добавления
+            product: Объект класса Product или его наследников
+
+        Raises:
+            TypeError: Если product не является экземпляром Product или его наследником
         """
+        if not isinstance(product, Product):
+            raise TypeError(
+                f"Можно добавлять только объекты Product или его наследников. "
+                f"Получен: {type(product).__name__}"
+            )
         self.__products.append(product)
         Category.product_count += 1

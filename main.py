@@ -1,6 +1,6 @@
 """Главный модуль e-commerce приложения."""
 
-from src.classes import Product, Category
+from src.classes import Product, Category, Smartphone, LawnGrass
 from src.utils import load_categories_from_json
 import json
 
@@ -11,42 +11,97 @@ def main() -> None:
     product1 = Product("Смартфон", "Мощный смартфон", 50000.0, 10)
     product2 = Product("Ноутбук", "Игровой ноутбук", 80000.0, 5)
 
+    # Создание смартфона
+    smartphone = Smartphone(
+        "iPhone 15 Pro",
+        "Флагманский смартфон Apple",
+        99999.0,
+        8,
+        "Высокая",
+        "15 Pro",
+        256,
+        "черный"
+    )
+
+    # Создание газонной травы
+    grass = LawnGrass(
+        "Газонная трава 'Изумруд'",
+        "Смесь для идеального газона",
+        1500.0,
+        50,
+        "Россия",
+        "7-14 дней",
+        "зеленый"
+    )
+
     # Создание категории с продуктами
     electronics = Category("Электроника", "Различные электронные устройства", [])
+    garden = Category("Садоводство", "Товары для сада и огорода", [])
 
-    # Добавление продуктов через метод add_product
+    # Добавление продуктов в категории
     electronics.add_product(product1)
     electronics.add_product(product2)
+    electronics.add_product(smartphone)
+    garden.add_product(grass)
 
-    print(f"Категория: {electronics.name}")
+    print("=" * 50)
+    print("ТЕСТИРОВАНИЕ КЛАССОВ-НАСЛЕДНИКОВ")
+    print("=" * 50)
+
+    print(f"\nКатегория: {electronics.name}")
     print(f"Количество категорий: {Category.category_count}")
     print(f"Количество продуктов: {Category.product_count}")
 
-    # Вывод продуктов через геттер
-    print("\nТовары в категории:")
+    print("\nТовары в категории 'Электроника':")
     print(electronics.products)
 
-    # Тестирование строкового представления
-    print("\n--- Тестирование __str__ ---")
-    print(f"Продукт: {product1}")
-    print(f"Категория: {electronics}")
+    print(f"\nКатегория: {garden.name}")
+    print(garden.products)
 
-    # Тестирование сложения продуктов
+    print("\n" + "=" * 50)
+    print("ТЕСТИРОВАНИЕ МАГИЧЕСКИХ МЕТОДОВ")
+    print("=" * 50)
+
+    # Тестирование строкового представления
+    print(f"\nПродукт (обычный): {product1}")
+    print(f"Смартфон: {smartphone}")
+    print(f"Газонная трава: {grass}")
+    print(f"Категория Электроника: {electronics}")
+    print(f"Категория Садоводство: {garden}")
+
+    # Тестирование сложения
     print("\n--- Тестирование __add__ ---")
-    product3 = Product("Планшет", "Удобный планшет", 35000.0, 8)
-    total_cost = product1 + product3
-    print(f"Стоимость товаров на складе: {total_cost} руб.")
-    print(
-        f"Расчет: {product1.price} * {product1.quantity} + "
-        f"{product3.price} * {product3.quantity} = {total_cost}"
+    total_cost = product1 + product2
+    print(f"Стоимость товаров на складе (продукты): {total_cost} руб.")
+
+    # Сложение смартфонов
+    smartphone2 = Smartphone(
+        "Samsung Galaxy S24",
+        "Флагманский смартфон Samsung",
+        89999.0,
+        5,
+        "Высокая",
+        "S24",
+        256,
+        "фиолетовый"
     )
+    total_smartphones = smartphone + smartphone2
+    print(f"Стоимость смартфонов на складе: {total_smartphones} руб.")
+
+    # Попытка сложения разных типов (вызовет ошибку)
+    print("\n--- Попытка сложения разных типов ---")
+    try:
+        result = product1 + smartphone
+        print(f"Результат: {result}")
+    except TypeError as e:
+        print(f"Ошибка (ожидаемо): {e}")
 
     # Тестирование сеттера цены
     print("\n--- Тестирование сеттера цены ---")
-    print(f"Текущая цена смартфона: {product1.price} руб.")
-    product1.price = 45000.0
-    print(f"Новая цена смартфона: {product1.price} руб.")
-    product1.price = -5000.0  # попытка установить отрицательную цену
+    print(f"Текущая цена смартфона: {smartphone.price} руб.")
+    smartphone.price = 85000.0
+    print(f"Новая цена смартфона: {smartphone.price} руб.")
+    smartphone.price = -5000.0  # попытка установить отрицательную цену
 
     # Тестирование класс-метода new_product
     print("\n--- Тестирование класс-метода new_product ---")
@@ -62,6 +117,7 @@ def main() -> None:
     print(electronics.products)
 
     # Пример загрузки из JSON
+    print("\n--- Загрузка из JSON ---")
     try:
         categories = load_categories_from_json("data/products.json")
         for category in categories:
