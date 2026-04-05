@@ -1,13 +1,18 @@
 """Главный модуль e-commerce приложения."""
 
-from src.classes import Product, Category, Smartphone, LawnGrass
+from src.classes import Product, Category, Smartphone, LawnGrass, BaseProduct
 from src.utils import load_categories_from_json
 import json
 
 
 def main() -> None:
     """Основная функция приложения."""
-    # Создание тестовых продуктов
+    print("=" * 60)
+    print("ТЕСТИРОВАНИЕ АБСТРАКТНОГО КЛАССА И МИКСИНА")
+    print("=" * 60)
+
+    # Создание тестовых продуктов (миксин автоматически выводит информацию)
+    print("\n--- Создание продуктов (миксин выводит информацию) ---")
     product1 = Product("Смартфон", "Мощный смартфон", 50000.0, 10)
     product2 = Product("Ноутбук", "Игровой ноутбук", 80000.0, 5)
 
@@ -34,6 +39,12 @@ def main() -> None:
         "зеленый"
     )
 
+    # Проверка принадлежности к абстрактному классу
+    print("\n--- Проверка наследования от BaseProduct ---")
+    print(f"product1 является BaseProduct: {isinstance(product1, BaseProduct)}")
+    print(f"smartphone является BaseProduct: {isinstance(smartphone, BaseProduct)}")
+    print(f"grass является BaseProduct: {isinstance(grass, BaseProduct)}")
+
     # Создание категории с продуктами
     electronics = Category("Электроника", "Различные электронные устройства", [])
     garden = Category("Садоводство", "Товары для сада и огорода", [])
@@ -44,9 +55,9 @@ def main() -> None:
     electronics.add_product(smartphone)
     garden.add_product(grass)
 
-    print("=" * 50)
+    print("\n" + "=" * 60)
     print("ТЕСТИРОВАНИЕ КЛАССОВ-НАСЛЕДНИКОВ")
-    print("=" * 50)
+    print("=" * 60)
 
     print(f"\nКатегория: {electronics.name}")
     print(f"Количество категорий: {Category.category_count}")
@@ -58,9 +69,9 @@ def main() -> None:
     print(f"\nКатегория: {garden.name}")
     print(garden.products)
 
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 60)
     print("ТЕСТИРОВАНИЕ МАГИЧЕСКИХ МЕТОДОВ")
-    print("=" * 50)
+    print("=" * 60)
 
     # Тестирование строкового представления
     print(f"\nПродукт (обычный): {product1}")
@@ -114,7 +125,6 @@ def main() -> None:
     tablet = Product.new_product(product_data)
     electronics.add_product(tablet)
     print(f"Добавлен новый продукт: {tablet.name}")
-    print(electronics.products)
 
     # Пример загрузки из JSON
     print("\n--- Загрузка из JSON ---")

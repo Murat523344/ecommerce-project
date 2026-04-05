@@ -1,9 +1,53 @@
 """Модуль с классами Product и Category для e-commerce платформы."""
 
+from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 
 
-class Product:
+class BaseProduct(ABC):
+    """Абстрактный базовый класс для всех продуктов."""
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """Абстрактный метод строкового представления."""
+        pass
+
+    @abstractmethod
+    def __add__(self, other: 'BaseProduct') -> float:
+        """Абстрактный метод сложения продуктов."""
+        pass
+
+    @property
+    @abstractmethod
+    def price(self) -> float:
+        """Абстрактный геттер цены."""
+        pass
+
+
+class MixinRepr:
+    """Миксин для вывода информации о созданном объекте."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Инициализация миксина с выводом информации об объекте."""
+        super().__init__(*args, **kwargs)
+        print(f"Создан объект: {self.__repr__()}")
+
+    def __repr__(self) -> str:
+        """
+        Магический метод для отображения информации об объекте.
+
+        Returns:
+            Строка с информацией о классе и параметрах объекта
+        """
+        attributes = []
+        for key, value in self.__dict__.items():
+            # Пропускаем приватные атрибуты
+            if not key.startswith('_'):
+                attributes.append(f"{key}={repr(value)}")
+        return f"{self.__class__.__name__}({', '.join(attributes)})"
+
+
+class Product(BaseProduct, MixinRepr):
     """Класс для представления продукта."""
 
     def __init__(
@@ -22,6 +66,8 @@ class Product:
         self.description = description
         self._price = price  # приватный атрибут
         self.quantity = quantity
+        # Вызов миксина происходит автоматически через super()
+        super().__init__()
 
     def __str__(self) -> str:
         """

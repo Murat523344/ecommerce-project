@@ -1,7 +1,39 @@
 """Тесты для классов Product и Category."""
 
 import pytest
-from src.classes import Product, Category, Smartphone, LawnGrass
+from src.classes import Product, Category, Smartphone, LawnGrass, BaseProduct, MixinRepr
+
+
+class TestBaseProduct:
+    """Тесты для абстрактного класса BaseProduct."""
+
+    def test_base_product_is_abstract(self):
+        """Тест, что BaseProduct является абстрактным классом."""
+        # Проверяем, что нельзя создать экземпляр абстрактного класса
+        with pytest.raises(TypeError):
+            BaseProduct()  # type: ignore
+
+
+class TestMixinRepr:
+    """Тесты для миксина MixinRepr."""
+
+    def test_mixin_repr_output(self, capsys):
+        """Тест вывода информации при создании объекта."""
+        Product("Тест", "Описание", 100.0, 5)
+        captured = capsys.readouterr()
+        assert "Создан объект: Product" in captured.out
+        assert "name='Тест'" in captured.out
+        assert "description='Описание'" in captured.out
+        assert "quantity=5" in captured.out
+
+    def test_mixin_repr_method(self):
+        """Тест метода __repr__."""
+        product = Product("Тест", "Описание", 100.0, 5)
+        repr_str = repr(product)
+        assert "Product" in repr_str
+        assert "name='Тест'" in repr_str
+        assert "description='Описание'" in repr_str
+        assert "quantity=5" in repr_str
 
 
 class TestProduct:
@@ -15,6 +47,16 @@ class TestProduct:
         assert product.description == "Смартфон"
         assert product.price == 30000.0
         assert product.quantity == 15
+
+    def test_product_is_instance_of_base_product(self):
+        """Тест, что Product является наследником BaseProduct."""
+        product = Product("Тест", "Описание", 100.0, 5)
+        assert isinstance(product, BaseProduct)
+
+    def test_product_inherits_from_mixin(self):
+        """Тест, что Product наследует от MixinRepr."""
+        product = Product("Тест", "Описание", 100.0, 5)
+        assert isinstance(product, MixinRepr)
 
     def test_product_with_float_price(self):
         """Тест продукта с ценой с копейками."""
@@ -122,12 +164,13 @@ class TestSmartphone:
         assert smartphone.color == "черный"
 
     def test_smartphone_inheritance(self):
-        """Тест наследования от Product."""
+        """Тест наследования от Product и BaseProduct."""
         smartphone = Smartphone(
             "iPhone", "Смартфон", 50000.0, 5,
             "Высокая", "15 Pro", 256, "черный"
         )
         assert isinstance(smartphone, Product)
+        assert isinstance(smartphone, BaseProduct)
         assert isinstance(smartphone, Smartphone)
 
     def test_smartphone_str_method(self):
@@ -164,12 +207,13 @@ class TestLawnGrass:
         assert grass.color == "зеленый"
 
     def test_lawn_grass_inheritance(self):
-        """Тест наследования от Product."""
+        """Тест наследования от Product и BaseProduct."""
         grass = LawnGrass(
             "Газонная трава", "Описание", 1500.0, 100,
             "Россия", "7-14 дней", "зеленый"
         )
         assert isinstance(grass, Product)
+        assert isinstance(grass, BaseProduct)
         assert isinstance(grass, LawnGrass)
 
     def test_lawn_grass_str_method(self):
