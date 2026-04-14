@@ -61,7 +61,13 @@ class Product(BaseProduct, MixinRepr):
             description: Описание продукта
             price: Цена продукта
             quantity: Количество на складе
+
+        Raises:
+            ValueError: Если количество товара равно нулю
         """
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
         self.name = name
         self.description = description
         self._price = price  # приватный атрибут
@@ -268,3 +274,20 @@ class Category:
             )
         self.__products.append(product)
         Category.product_count += 1
+
+    def average_price(self) -> float:
+        """
+        Подсчет среднего ценника всех товаров в категории.
+
+        Returns:
+            Средняя цена всех товаров в категории.
+            Если товаров нет, возвращает 0.
+        """
+        if not self.__products:
+            return 0.0
+
+        try:
+            total_price = sum(product.price for product in self.__products)
+            return total_price / len(self.__products)
+        except ZeroDivisionError:
+            return 0.0
